@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NOXAR PARFUM admin paneli">
+  <title>NOXAR PARFUM ADMIN</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="admin-login-screen" hidden>
+    <form class="admin-login-card" id="admin-login-form">
+      <p class="eyebrow">NOXAR PARFUM</p>
+      <h1>Admin panelga kirish</h1>
+      <p>Supabase admin akkauntingiz bilan kiring.</p>
+      <label>Email<input name="email" type="email" autocomplete="username" required placeholder="admin@example.com"></label>
+      <label>Parol<input name="password" type="password" autocomplete="current-password" required></label>
+      <button class="button-gold" type="submit">Kirish</button>
+      <small class="admin-login-error" role="alert"></small>
+    </form>
+  </div>
+  <div class="admin-shell">
+    <div class="sidebar-backdrop" data-close-sidebar></div>
+    <aside class="sidebar" aria-label="Admin navigatsiyasi">
+      <div class="sidebar-brand"><span>N</span><div>NOXAR PARFUM<small>ADMIN PANEL</small></div></div>
+      <nav class="sidebar-nav">
+        <p class="nav-label">Boshqaruv</p>
+        <a class="nav-link active" href="#dashboard" data-view="dashboard"><span>⌂</span> Dashboard</a>
+        <a class="nav-link" href="#products" data-view="products"><span>◇</span> Mahsulotlar</a>
+        <a class="nav-link" href="#reservation-requests" data-view="reservation-requests"><span>♧</span> Ajratish so‘rovlari</a>
+        <a class="nav-link" href="#inventory" data-view="inventory"><span>▥</span> Ombor</a>
+        <a class="nav-link" href="#reviews" data-view="reviews"><span>★</span> Sharhlar</a>
+      </nav>
+      <button class="logout-link" type="button"><span>↪</span> Chiqish</button>
+    </aside>
+
+    <main class="main-content" id="admin-main">
+      <header class="topbar">
+        <div class="topbar-title"><p class="eyebrow">Boshqaruv markazi</p><h1>Dashboard</h1></div>
+        <div class="topbar-actions">
+          <button class="menu-toggle" type="button" aria-label="Bo‘limlar menyusini ochish" aria-expanded="false"><i></i><i></i><i></i></button>
+          <div class="quick-nav" hidden>
+            <a href="#dashboard" data-view="dashboard">Dashboard</a>
+            <a href="#products" data-view="products">Mahsulotlar</a>
+            <a href="#reservation-requests" data-view="reservation-requests">Ajratish so‘rovlari</a>
+            <a href="#inventory" data-view="inventory">Ombor</a>
+            <a href="#reviews" data-view="reviews">Sharhlar</a>
+          </div>
+          <div class="admin-profile"><span class="profile-avatar">NA</span><div><strong>Admin</strong><small>NOXAR PARFUM</small></div><span class="profile-chevron">⌄</span></div>
+        </div>
+      </header>
+
+      <section class="welcome-row">
+        <div><p class="eyebrow" data-admin-current-date></p><h2>Xush kelibsiz, Admin <i>✦</i></h2><p>Do‘kon ko‘rsatkichlari va so‘nggi so‘rovlar.</p></div>
+      </section>
+
+      <section class="stats-grid" aria-label="Asosiy statistika">
+        <article class="stat-card"><div class="stat-icon gold">◇</div><div><span>Mahsulotlar</span><strong data-stat="products">0</strong><small class="muted">Katalogdagi jami</small></div></article>
+        <article class="stat-card"><div class="stat-icon green">♧</div><div><span>Yangi so‘rovlar</span><strong data-stat="pending-reservations">0</strong><small class="positive">Javob kutmoqda</small></div></article>
+        <article class="stat-card"><div class="stat-icon orange">!</div><div><span>Kam qolgan mahsulotlar</span><strong data-stat="low-stock">0</strong><small class="warning">E’tibor talab qiladi</small></div></article>
+        <article class="stat-card"><div class="stat-icon red">★</div><div><span>Kutilayotgan sharhlar</span><strong data-stat="pending-reviews">0</strong><small class="muted">Tekshirish kerak</small></div></article>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="panel orders-panel" id="recent-requests-panel">
+          <div class="panel-heading"><div><p class="eyebrow">Faoliyat</p><h2>So‘nggi so‘rovlar</h2></div><button class="panel-link" type="button" data-dashboard-requests>Barchasini ko‘rish <span>↗</span></button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Sana</th><th>Mijoz</th><th>Telefon</th><th>Mahsulot</th><th>So‘rov turi</th><th>Holat</th></tr></thead>
+              <tbody id="recent-requests"></tbody>
+            </table>
+          </div>
+        </article>
+        <article class="panel stock-panel" id="low-stock-panel">
+          <div class="panel-heading"><div><p class="eyebrow">Ombor nazorati</p><h2>Kam qolgan mahsulotlar</h2></div></div>
+          <div class="low-stock-list" id="low-stock-list"></div>
+          <button class="outline-button" type="button" data-dashboard-inventory>Omborni ko‘rish <span>↗</span></button>
+        </article>
+      </section>
+
+      <section class="products-section panel" id="products">
+        <div class="panel-heading">
+          <div><p class="eyebrow">Katalog boshqaruvi</p><h2>Mahsulotlar</h2></div>
+          <button class="button-gold add-product-button" type="button">+ Mahsulot qo‘shish</button>
+        </div>
+        <div class="products-toolbar">
+          <label class="admin-search">Qidirish<input type="search" id="product-search" placeholder="Mahsulot yoki brend..."></label>
+          <label class="admin-select">Bo‘lim<select id="product-category-filter"><option value="all">UMUMIY</option><option value="atirlar">Atirlar</option><option value="body-fragrance">Tana parvarishi</option><option value="deodorants">Dezodorant</option><option value="perfume-oils">Parfyum moylari</option><option value="home-fragrance">Uy aromati</option><option value="bath-shower">Dush &amp; vanna</option><option value="accessories">Aksessuarlar</option></select></label>
+          <label class="admin-select">Jins<select id="product-gender-filter"><option value="all">Barchasi</option><option value="ayollar">Ayollar</option><option value="erkaklar">Erkaklar</option><option value="unisex">Uniseks</option></select></label>
+          <label class="admin-select">Holat<select id="product-stock-filter"><option value="all">Barchasi</option><option value="available">Mavjud</option><option value="low">Kam qolgan</option><option value="soldout">Sotilgan</option></select></label>
+        </div>
+        <div class="table-wrap">
+          <table class="products-table">
+            <thead><tr><th>Mahsulot</th><th>Brend</th><th>Bo‘lim</th><th>Jins</th><th>Narx</th><th>Stok</th><th>Holat</th><th>Amallar</th></tr></thead>
+            <tbody id="products-table-body"></tbody>
+          </table>
+        </div>
+        <div class="products-pagination" aria-label="Mahsulotlar sahifalari"></div>
+      </section>
+
+      <section class="orders-section panel reservations-section" id="reservation-requests-management" hidden>
+        <div class="panel-heading">
+          <div><p class="eyebrow">Showroom so‘rovlari</p><h2>Ajratish so‘rovlari</h2></div>
+          <button class="button-gold" type="button" data-refresh-reservations>Yangilash</button>
+        </div>
+        <div class="products-toolbar orders-toolbar">
+          <label class="admin-search">Qidirish<input type="search" id="reservation-search" placeholder="Mijoz yoki mahsulot..."></label>
+          <label class="admin-select">Holat<select id="reservation-status-filter"><option value="all">Barchasi</option><option value="pending">Kutilmoqda</option><option value="confirmed">Tasdiqlangan</option><option value="cancelled">Bekor qilingan</option></select></label>
+        </div>
+        <div class="table-wrap">
+          <table class="orders-management-table">
+            <thead><tr><th>Sana</th><th>Mijoz</th><th>Telefon</th><th>Mahsulot</th><th>Miqdor</th><th>So‘rov turi</th><th>Holat</th><th></th></tr></thead>
+            <tbody id="reservations-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="inventory-section panel" id="inventory-management" hidden>
+        <div class="panel-heading">
+          <div><p class="eyebrow">Ombor nazorati</p><h2>Ombor</h2></div>
+          <div class="panel-actions"><button class="outline-button compact-button" type="button" data-export-inventory>CSV eksport</button><button class="button-gold" type="button" data-refresh-inventory>Yangilash</button></div>
+        </div>
+        <div class="inventory-stats" aria-label="Ombor statistikasi">
+          <div><span>Jami SKU</span><strong data-inventory-stat="sku">0</strong></div>
+          <div><span>Jami qoldiq</span><strong data-inventory-stat="units">0</strong></div>
+          <div><span>Kam qolgan</span><strong data-inventory-stat="low">0</strong></div>
+          <div><span>Ombor qiymati</span><strong data-inventory-stat="value">0 so‘m</strong></div>
+        </div>
+        <div class="products-toolbar inventory-toolbar">
+          <label class="admin-search">Qidirish<input type="search" id="inventory-search" placeholder="Mahsulot yoki brend..."></label>
+          <label class="admin-select">Holat<select id="inventory-stock-filter"><option value="all">Barchasi</option><option value="available">Mavjud</option><option value="low">Kam qolgan</option><option value="soldout">Sotilgan</option></select></label>
+          <label class="admin-select">Ogohlantirish chegarasi<select id="inventory-threshold"><option value="3">3 dona</option><option value="5">5 dona</option><option value="10">10 dona</option></select></label>
+        </div>
+        <div class="inventory-alert" id="inventory-alert" role="status" hidden></div>
+        <div class="table-wrap"><table class="inventory-table"><thead><tr><th>Mahsulot</th><th>Brend</th><th>Narx</th><th>Qoldiq</th><th>Holat</th><th>Ombor qiymati</th><th>Amallar</th></tr></thead><tbody id="inventory-table-body"></tbody></table></div>
+      </section>
+
+      <section class="reviews-section panel" id="reviews-management" hidden>
+        <div class="panel-heading">
+          <div><p class="eyebrow">Mijozlar fikri</p><h2>Sharhlar</h2></div>
+          <div class="panel-actions"><button class="outline-button compact-button" type="button" data-export-reviews>CSV eksport</button><button class="button-gold" type="button" data-refresh-reviews>Yangilash</button></div>
+        </div>
+        <div class="payment-stats review-stats" aria-label="Sharhlar statistikasi">
+          <div><span>Jami sharhlar</span><strong data-review-stat="total">0</strong></div>
+          <div><span>Kutilayotgan</span><strong data-review-stat="pending">0</strong></div>
+          <div><span>O‘rtacha reyting</span><strong data-review-stat="average">0.0 ★</strong></div>
+          <div><span>Tasdiqlangan</span><strong data-review-stat="approved">0</strong></div>
+        </div>
+        <div class="products-toolbar payment-toolbar">
+          <label class="admin-search">Qidirish<input type="search" id="review-search" placeholder="Mahsulot, ism yoki sharh..."></label>
+          <label class="admin-select">Holat<select id="review-status-filter"><option value="all">Barchasi</option><option value="pending">Kutilmoqda</option><option value="approved">Tasdiqlangan</option><option value="rejected">Rad etilgan</option></select></label>
+          <label class="admin-select">Reyting<select id="review-rating-filter"><option value="all">Barchasi</option><option value="5">5 yulduz</option><option value="4">4 yulduz</option><option value="3">3 yulduz</option><option value="2">2 yulduz</option><option value="1">1 yulduz</option></select></label>
+        </div>
+        <div class="table-wrap"><table class="reviews-table"><thead><tr><th>Mijoz</th><th>Mahsulot</th><th>Reyting</th><th>Sharh</th><th>Holat</th><th>Amallar</th></tr></thead><tbody id="reviews-table-body"></tbody></table></div>
+      </section>
+
+      <footer class="admin-footer"><span>© 2026 NOXAR PARFUM ADMIN</span><span>Boshqaruv paneli</span></footer>
+    </main>
+  </div>
+  <div class="admin-toast" role="status"></div>
+  <div class="logout-modal" aria-hidden="true">
+    <div class="admin-modal-backdrop" data-close-logout></div>
+    <section class="logout-card" role="dialog" aria-modal="true" aria-labelledby="logout-title">
+      <div class="logout-icon">↪</div><h2 id="logout-title">Admin paneldan chiqish</h2><p>Joriy qurilmadagi sessiya yopiladi. Mahsulotlar va so‘rovlar o‘chirilmaydi.</p>
+      <div class="logout-actions"><button type="button" class="outline-button" data-close-logout>Bekor qilish</button><button type="button" class="button-gold" data-confirm-logout>Chiqish</button></div>
+    </section>
+  </div>
+  <div class="product-modal-admin" aria-hidden="true">
+    <div class="admin-modal-backdrop" data-close-product-modal></div>
+    <form class="admin-product-form">
+      <div class="modal-form-heading"><div><p class="eyebrow">Katalog</p><h2 id="product-form-title">Mahsulot qo‘shish</h2></div><button type="button" class="modal-close-admin" data-close-product-modal>×</button></div>
+      <input type="hidden" name="id">
+      <div class="admin-form-grid">
+        <label>Mahsulot nomi<input name="name" required placeholder="NO. 04 Lumière"></label>
+        <label>Brend<input name="brand" required placeholder="NOXAR"></label>
+        <label>Narx (so‘m)<input name="amount" type="number" min="0" required placeholder="890000"></label>
+        <label>Eski narx (ixtiyoriy)<input name="oldAmount" type="number" min="0" placeholder="Chegirma bo‘lsa, avvalgi narx"></label>
+        <label>Stok soni<input name="stock" type="number" min="0" required placeholder="10"></label>
+        <label class="admin-category-picker">Bo‘lim<select name="category" required><option value="atirlar">Atirlar</option><option value="body-fragrance">Tana parvarishi</option><option value="deodorants">Dezodorant</option><option value="perfume-oils">Parfyum moylari</option><option value="home-fragrance">Uy aromati</option><option value="bath-shower">Dush &amp; vanna</option><option value="accessories">Aksessuarlar</option></select><button class="admin-category-trigger" type="button" aria-haspopup="listbox" aria-expanded="false"><span>Atirlar</span><b aria-hidden="true">⌄</b></button><div class="admin-category-menu" role="listbox" hidden></div></label>
+        <label class="admin-gender-picker">Jins<select name="gender" required><option value="unisex">Uniseks</option><option value="erkaklar">Erkaklar</option><option value="ayollar">Ayollar</option></select><button class="admin-gender-trigger" type="button" aria-haspopup="listbox" aria-expanded="false"><span>Uniseks</span><b aria-hidden="true">⌄</b></button><div class="admin-gender-menu" role="listbox" hidden></div></label>
+        <label>Hajmi (ml yoki “set”)<input name="volume" placeholder="50"></label>
+        <label>Belgi (ixtiyoriy)<input name="badge" maxlength="20" placeholder="Yangi, Bestseller, Sovg‘a..."></label>
+        <label>Hid oilasi<select name="family"><option value="amber">Amberli</option><option value="woody">Yog‘ochli</option><option value="floral">Gulli</option></select></label>
+      </div>
+      <label>Notalar <small>(Yuqori · Yurak · Baza — “·” belgisi bilan ajrating)</small><textarea name="notes" rows="2" required placeholder="Qora qalampir · Vetiver · Amber"></textarea></label>
+      <label>Tavsif (ixtiyoriy)<textarea name="description" rows="3" placeholder="Mahsulot haqida batafsil..."></textarea></label>
+      <div class="media-fields">
+        <label>Mahsulot rasmi<input name="image" type="file" accept="image/*"><small>JPG, PNG yoki WebP · 5 MB gacha</small></label>
+        <label>Mahsulot video roligi<input name="video" type="file" accept="video/*"><small>MP4 yoki WebM · 20 MB gacha</small></label>
+      </div>
+      <div class="media-preview" aria-live="polite"></div>
+      <div class="admin-form-actions"><button class="outline-button" type="button" data-close-product-modal>Bekor qilish</button><button class="button-gold" type="submit">Saqlash</button></div>
+    </form>
+  </div>
+  <script src="supabase-config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
